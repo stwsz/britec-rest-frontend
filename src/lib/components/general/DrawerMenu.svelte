@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import {
 		Drawer,
@@ -14,12 +13,14 @@
 		ArrowLeftToBracketOutline,
 		ExclamationCircleOutline,
 		PenOutline,
-		CheckPlusCircleOutline
+		ArrowUpRightFromSquareOutline
 	} from 'flowbite-svelte-icons';
 	import { sineIn } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
+	import { comanda } from '$lib/store/comanda';
 
-	import type { comanda } from '$lib/types/comanda';
+	import type { typeComanda } from '$lib/types/comanda';
+	import { userInfo } from '$lib/store/user';
 
 	export let hiddenDrawer: boolean;
 
@@ -32,17 +33,25 @@
 	let signOutModal = false;
 	let comandasAbertasModal = false;
 	let comandasFechadasModal = false;
+	let modalComandasFechadas = false;
 
-	let comandasAbertas: comanda[] = [];
-	let comandasFechadas: comanda[] = [];
+	let comandasAbertas: typeComanda[] = [];
+	let comandasFechadas: typeComanda[] = [];
 
-	onMount(async () => {
+	let closedComanda = {
+		id: '',
+		orderId: ''
+	};
+
+	async function getComandas() {
 		const reqComandasAbertas = await fetch('http://26.204.212.174:8080/api/tables/opened');
 		const reqComandasFechadas = await fetch('http://26.204.212.174:8080/api/tables/closed');
 
 		comandasAbertas = await reqComandasAbertas.json();
 		comandasFechadas = await reqComandasFechadas.json();
-	});
+	}
+
+	getComandas();
 </script>
 
 <Drawer
@@ -75,7 +84,7 @@
 				</li>
 				<li>
 					<button
-						onclick={() => (comandasAbertasModal = true)}
+						onclick={() => (comandasFechadasModal = true)}
 						class="block rounded text-sm text-gray-700 transition">Comandas fechadas</button
 					>
 				</li>
@@ -111,7 +120,7 @@
 		<Button
 			class="me-2 bg-[var(--color-error)] text-white"
 			onclick={() => {
-				localStorage.removeItem('user');
+				sessionStorage.removeItem('user');
 				goto('/');
 			}}
 		>
@@ -136,11 +145,25 @@
 	class={`w-11/12 ${comandasAbertas.length > 0 ? 'h-2/3' : 'h-fit'}`}
 >
 	{#if comandasAbertas.length > 0}
-		{#each comandasAbertas as comanda}
+		{#each comandasAbertas as keyComanda}
 			<Card size="lg" class="flex flex-row items-center justify-between p-4">
-				<p>{comanda.id}</p>
+				<p>{keyComanda.id}</p>
 
-				<PenOutline class="text-primary h-5 w-5" />
+				<button
+					onclick={() => {
+						comanda.set({
+							comanda: String(keyComanda.id),
+							pedido: String(keyComanda.orderId)
+						});
+
+						localStorage.setItem('comanda', JSON.stringify($comanda));
+
+						hiddenDrawer = true;
+						comandasAbertasModal = false;
+					}}
+				>
+					<PenOutline class="text-primary h-5 w-5" />
+				</button>
 			</Card>
 		{/each}
 	{:else}
@@ -159,10 +182,66 @@
 			<Card size="lg" class="flex flex-row items-center justify-between p-4">
 				<p>{comanda.id}</p>
 
-				<CheckPlusCircleOutline class="text-primary h-5 w-5" />
+				<button
+					onclick={() => {
+						closedComanda.id = String(comanda.id);
+
+						modalComandasFechadas = true;
+					}}
+				>
+					<ArrowUpRightFromSquareOutline class="text-primary h-5 w-5 rotate-360" />
+				</button>
 			</Card>
 		{/each}
 	{:else}
 		<p class="text-gray-500">Nenhuma comanda fechada no momento.</p>
 	{/if}
+</Modal>
+
+<Modal
+	bind:open={modalComandasFechadas}
+	size="xs"
+	autoclose
+	transition={slide}
+	class="w-11/12 text-sm"
+>
+	<div class="mt-10 text-center">
+		<h3 class="mb-5 font-normal text-gray-600">
+			Esta comanda está atualmente fechada. Deseja reabri-la para fazer um novo pedido?
+		</h3>
+		<Button
+			class="bg-primary me-2 text-sm"
+			onclick={async () => {
+				const reqPedido = await fetch('http://26.204.212.174:8080/api/orders', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						tableId: Number(closedComanda.id),
+						employee: $userInfo.username
+					})
+				});
+				const resPedido = await reqPedido.json();
+
+				closedComanda.orderId = resPedido.order.id;
+
+				comanda.set({
+					comanda: closedComanda.id,
+					pedido: closedComanda.orderId
+				});
+
+				localStorage.setItem('comanda', JSON.stringify($comanda));
+
+				modalComandasFechadas = false;
+				hiddenDrawer = true;
+				comandasFechadasModal = false;
+
+				goto('./../sistema');
+			}}
+		>
+			Sim, abrir comanda
+		</Button>
+		<Button color="alternative" class="text-sm">Cancelar</Button>
+	</div>
 </Modal>

@@ -19,7 +19,7 @@
 	let toastType: 'info' | 'error' | 'success' = 'info';
 
 	onMount(() => {
-		const getUserInfo = localStorage.getItem('user');
+		const getUserInfo = sessionStorage.getItem('user');
 
 		if (getUserInfo) {
 			goto('/sistema');
@@ -88,7 +88,7 @@
 						if (reqLogin.ok) {
 							const resLogin = await reqLogin.json();
 
-							localStorage.setItem('user', JSON.stringify(resLogin.user));
+							sessionStorage.setItem('user', JSON.stringify(resLogin.user));
 							userInfo.set(resLogin.user);
 
 							goto('/comanda');

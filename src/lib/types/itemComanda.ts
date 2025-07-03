@@ -1,5 +1,5 @@
 export type itemComanda = {
-	id?: number,
+	id?: number;
 	barCode: string;
 	nome: string;
 	preco: number;

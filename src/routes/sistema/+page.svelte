@@ -45,6 +45,12 @@
 			goto('/');
 		}
 
+		let storedComanda = localStorage.getItem('comanda');
+
+		if (storedComanda) {
+			$comanda = JSON.parse(storedComanda);
+		}
+
 		if ($comanda.pedido === '') {
 			const reqPedido = await fetch('http://26.204.212.174:8080/api/orders', {
 				method: 'POST',
@@ -61,11 +67,11 @@
 
 			$comanda.pedido = responsePedidos.order.id;
 		}
-		
-		const reqProdutos = await fetch(`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products`);
+
+		const reqProdutos = await fetch(
+			`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products`
+		);
 		const responseProdutos = await reqProdutos.json();
-		console.log(responseProdutos);
-		
 
 		if (!responseProdutos.message) {
 			produtos = responseProdutos.map((produto: any) => ({
@@ -116,7 +122,7 @@
 	}
 </script>
 
-<main class="p-4 pb-24">
+<main class="p-4 pb-32">
 	<div class="mb-4 flex items-center justify-between">
 		<div class="flex flex-col gap-0.5">
 			<p class="text-xl font-semibold text-gray-800 dark:text-white">{atendente}</p>
@@ -130,7 +136,7 @@
 			</p>
 		</div>
 
-		<Button onclick={() => (hiddenDrawer = false)} class="p-0 text-primary absolute top-3 right-2"
+		<Button onclick={() => (hiddenDrawer = false)} class="text-primary absolute top-3 right-2 p-0"
 			><BarsOutline class="h-7 w-7" /></Button
 		>
 	</div>
@@ -223,9 +229,11 @@
 <div
 	class="bg-primary fixed right-0 bottom-0 left-0 z-50 flex flex-col gap-4 px-4! py-5! text-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)]"
 >
-	<button onclick={() => {
-			hiddenInfoProducts = !hiddenInfoProducts
-		}}>
+	<button
+		onclick={() => {
+			hiddenInfoProducts = !hiddenInfoProducts;
+		}}
+	>
 		<AngleUpOutline
 			class={`h-5 w-5 transition-all ${hiddenInfoProducts === true ? 'rotate-180' : 'rotate-0'}`}
 		/>
@@ -268,16 +276,15 @@
 
 							<Button
 								class="p-0 text-red-500 focus:ring-0 focus:outline-none"
-								onclick={async() => {
-									await fetch(`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products/${produto.id}`, {
-										method: 'DELETE'
-									});
-
-									console.log(produtos);
+								onclick={async () => {
+									await fetch(
+										`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products/${produto.id}`,
+										{
+											method: 'DELETE'
+										}
+									);
 
 									produtos = produtos.filter((p) => p.id !== produto.id);
-
-									console.log(produtos);
 								}}
 							>
 								<TrashBinOutline class="h-5 w-5" />
@@ -300,14 +307,6 @@
 		<button
 			class="text-primary rounded-sm bg-white px-5 py-2 text-sm font-semibold shadow-sm transition hover:bg-gray-100"
 			onclick={() => {
-				alert(
-					`${produtos
-						.map((p) => `${p.nome} - ${p.quantidade} ${p.unidade} - R$ ${p.preco.toFixed(2)}`)
-						.join('\n')}
-
-Total: R$ ${produtos.reduce((total, p) => total + (p.preco || 0), 0).toFixed(2)}`
-				);
-
 				goto('./../comanda');
 			}}
 		>
@@ -342,23 +341,26 @@ Total: R$ ${produtos.reduce((total, p) => total + (p.preco || 0), 0).toFixed(2)}
 					onclick={async (e: any) => {
 						if (editProduto?.quantidade) {
 							if (editProduto.quantidade > 0) {
-								const editQuantity = await fetch(`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products/${editProduto.id}`, {
-									method: 'PUT',
-									headers: {
-										'Content-Type': 'application/json'
-									},
-									body: JSON.stringify({
-										quantity: editProduto.quantidade
-									})
-								});
+								const editQuantity = await fetch(
+									`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products/${editProduto.id}`,
+									{
+										method: 'PUT',
+										headers: {
+											'Content-Type': 'application/json'
+										},
+										body: JSON.stringify({
+											quantity: editProduto.quantidade
+										})
+									}
+								);
 
 								if (editQuantity.ok) {
 									produtos = produtos.map((p) =>
-									p.nome === editProduto?.nome ? { ...p, quantidade: editProduto.quantidade } : p
-								);
+										p.nome === editProduto?.nome ? { ...p, quantidade: editProduto.quantidade } : p
+									);
 
-								modalEditProduct = false;
-								editProduto = null;
+									modalEditProduct = false;
+									editProduto = null;
 								}
 							} else {
 								e.preventDefault();

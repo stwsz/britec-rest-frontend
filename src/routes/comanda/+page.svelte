@@ -29,7 +29,7 @@
 	$: modalComandasFechadas = false;
 
 	onMount(async () => {
-		const storedUser = localStorage.getItem('user');
+		const storedUser = sessionStorage.getItem('user');
 		if (storedUser) {
 			userInfo.set(JSON.parse(storedUser));
 			atendente = $userInfo.username || '';
@@ -107,6 +107,14 @@
 							comanda: responseModal.id,
 							pedido: responseModal.orderId
 						});
+
+						localStorage.setItem(
+							'comanda',
+							JSON.stringify({
+								comanda: responseModal.id,
+								pedido: responseModal.orderId
+							})
+						);
 
 						goto('./../sistema');
 					} else {
