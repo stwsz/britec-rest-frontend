@@ -36,6 +36,9 @@
 
 	let produtos = [] as itemComanda[];
 
+	let date: string = '';
+	let hour: string = '';
+
 	let atendente = '';
 
 	onMount(async () => {
@@ -65,7 +68,27 @@
 
 			const responsePedidos = await reqPedido.json();
 
+			console.log(responsePedidos);
+			
+			const formattedDate = responsePedidos.order.date.split('-').reverse().join('/');
+
+			date = formattedDate;
+			hour = responsePedidos.order.hour;
+
+			console.log(date);
+			console.log(hour);
+
 			$comanda.pedido = responsePedidos.order.id;
+		} else {
+			const reqPedido = await fetch(`http://26.204.212.174:8080/api/orders/${$comanda.pedido}`);
+
+			const responsePedidos = await reqPedido.json();
+
+			const dateObj = new Date(responsePedidos[0].date);
+
+			hour = responsePedidos[0].hour;
+			
+			date = dateObj.toLocaleDateString('pt-BR');
 		}
 
 		const reqProdutos = await fetch(
@@ -133,6 +156,9 @@
 			<p class="text-sm text-gray-600">
 				<span class="font-medium">Pedido:</span>
 				{$comanda.pedido}
+			</p>
+			<p class="text-sm text-gray-600">
+				{date} - {hour}
 			</p>
 		</div>
 
@@ -356,7 +382,9 @@
 
 								if (editQuantity.ok) {
 									produtos = produtos.map((p) =>
-										p.nome === editProduto?.nome ? { ...p, quantidade: editProduto.quantidade } : p
+										p.id === editProduto?.id
+											? { ...p, quantidade: Number(editProduto?.quantidade ?? 0) }
+											: p
 									);
 
 									modalEditProduct = false;

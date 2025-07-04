@@ -160,6 +160,8 @@
 
 						hiddenDrawer = true;
 						comandasAbertasModal = false;
+
+						goto('./../sistema');
 					}}
 				>
 					<PenOutline class="text-primary h-5 w-5" />
