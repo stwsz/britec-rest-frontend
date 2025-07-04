@@ -67,16 +67,11 @@
 			});
 
 			const responsePedidos = await reqPedido.json();
-
-			console.log(responsePedidos);
 			
 			const formattedDate = responsePedidos.order.date.split('-').reverse().join('/');
 
 			date = formattedDate;
 			hour = responsePedidos.order.hour;
-
-			console.log(date);
-			console.log(hour);
 
 			$comanda.pedido = responsePedidos.order.id;
 		} else {
