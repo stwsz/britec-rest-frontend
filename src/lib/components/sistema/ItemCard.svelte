@@ -82,7 +82,7 @@
 							id: resAddProduto.order.id,
 							barCode: item.barCode ?? '',
 							nome: item.description,
-							preco: Number((Number(item.price) * quantidade).toFixed(2)),
+							preco: Number((Number(item.price)).toFixed(2)),
 							unidade: item.unit,
 							quantidade: quantidade
 						};

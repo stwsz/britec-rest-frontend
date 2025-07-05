@@ -36,7 +36,7 @@
 
 	let editProduto: itemComanda | null = null;
 
-	let produtos = [] as itemComanda[];
+	$: produtos = [] as itemComanda[];
 
 	let date: string = '';
 	let hour: string = '';
@@ -324,7 +324,7 @@
 		<div class="flex flex-col leading-tight">
 			<p class="text-lg">Total:</p>
 			<p class="text-lg font-semibold">
-				R$ {produtos.reduce((total, p) => total + (p.preco || 0), 0).toFixed(2)}
+				R$ {produtos.reduce((total, produto) => total + produto.preco * produto.quantidade, 0).toFixed(2)}
 			</p>
 		</div>
 		<button
@@ -362,6 +362,8 @@
 			<div class="flex justify-end gap-2 pt-4">
 				<Button
 					onclick={async (e: any) => {
+						console.log(produtos);
+
 						if (editProduto?.quantidade) {
 							if (editProduto.quantidade > 0) {
 								const editQuantity = await fetch(
