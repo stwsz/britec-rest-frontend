@@ -21,6 +21,8 @@
 	import { userInfo } from '$lib/store/user';
 	import { comanda } from '$lib/store/comanda';
 
+	const ip = import.meta.env.VITE_IP;
+
 	let categorias: Section[] = [];
 
 	let termosBusca: Record<number, string> = {};
@@ -55,7 +57,7 @@
 		}
 
 		if ($comanda.pedido === '') {
-			const reqPedido = await fetch('http://26.204.212.174:8080/api/orders', {
+			const reqPedido = await fetch(`${ip}/api/orders`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -75,7 +77,7 @@
 
 			$comanda.pedido = responsePedidos.order.id;
 		} else {
-			const reqPedido = await fetch(`http://26.204.212.174:8080/api/orders/${$comanda.pedido}`);
+			const reqPedido = await fetch(`${ip}/api/orders/${$comanda.pedido}`);
 
 			const responsePedidos = await reqPedido.json();
 
@@ -87,7 +89,7 @@
 		}
 
 		const reqProdutos = await fetch(
-			`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products`
+			`${ip}/api/orders/${$comanda.pedido}/products`
 		);
 		const responseProdutos = await reqProdutos.json();
 
@@ -102,13 +104,13 @@
 			}));
 		}
 
-		const reqSections = await fetch('http://26.204.212.174:8080/api/sections');
+		const reqSections = await fetch(`${ip}/api/sections`);
 
 		if (reqSections.ok) {
 			const novasCategorias = await reqSections.json();
 
 			for (const categoria of novasCategorias) {
-				const reqProdutos = await fetch(`http://26.204.212.174:8080/api/products/${categoria.id}`);
+				const reqProdutos = await fetch(`${ip}/api/products/${categoria.id}`);
 
 				if (reqProdutos.ok) {
 					const produtos = await reqProdutos.json();
@@ -299,7 +301,7 @@
 								class="p-0 text-red-500 focus:ring-0 focus:outline-none"
 								onclick={async () => {
 									await fetch(
-										`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products/${produto.id}`,
+										`${ip}/api/orders/${$comanda.pedido}/products/${produto.id}`,
 										{
 											method: 'DELETE'
 										}
@@ -363,7 +365,7 @@
 						if (editProduto?.quantidade) {
 							if (editProduto.quantidade > 0) {
 								const editQuantity = await fetch(
-									`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products/${editProduto.id}`,
+									`${ip}/api/orders/${$comanda.pedido}/products/${editProduto.id}`,
 									{
 										method: 'PUT',
 										headers: {

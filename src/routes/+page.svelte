@@ -10,6 +10,8 @@
 	import { userInfo } from '$lib/store/user';
 	import { onMount } from 'svelte';
 
+	const ip = import.meta.env.VITE_IP;
+
 	$: validated = false;
 	$: inputNameValue = '';
 	$: inputPasswordValue = '';
@@ -74,7 +76,7 @@
 
 				if (validated) {
 					try {
-						const reqLogin = await fetch('http://26.204.212.174:8080/api/users/login', {
+						const reqLogin = await fetch(`${ip}/api/users/login`, {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/json'

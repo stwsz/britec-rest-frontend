@@ -11,6 +11,7 @@
 
 	const restLogo = import.meta.env.VITE_ESTABELECIMENTO_LOGO;
 	const restName = import.meta.env.VITE_ESTABELECIMENTO_NOME;
+	const ip = import.meta.env.VITE_IP;
 
 	let atendente = '';
 	let hiddenDrawer = true;
@@ -40,7 +41,7 @@
 
 	async function getComandas() {
 		const reqComanda = await fetch(
-			`http://26.204.212.174:8080/api/tables/check/${comandaInput.trim()}`,
+			`${ip}/api/tables/check/${comandaInput.trim()}`,
 			{
 				method: 'GET',
 				headers: {

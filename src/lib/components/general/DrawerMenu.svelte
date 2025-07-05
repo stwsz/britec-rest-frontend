@@ -22,6 +22,8 @@
 	import type { typeComanda } from '$lib/types/comanda';
 	import { userInfo } from '$lib/store/user';
 
+	const ip = import.meta.env.VITE_IP;
+
 	export let hiddenDrawer: boolean;
 
 	let transitionParamsRight = {
@@ -44,8 +46,8 @@
 	};
 
 	async function getComandas() {
-		const reqComandasAbertas = await fetch('http://26.204.212.174:8080/api/tables/opened');
-		const reqComandasFechadas = await fetch('http://26.204.212.174:8080/api/tables/closed');
+		const reqComandasAbertas = await fetch(`${ip}/api/tables/opened`);
+		const reqComandasFechadas = await fetch(`${ip}/api/tables/closed`);
 
 		comandasAbertas = await reqComandasAbertas.json();
 		comandasFechadas = await reqComandasFechadas.json();
@@ -214,7 +216,7 @@
 		<Button
 			class="bg-primary me-2 text-sm"
 			onclick={async () => {
-				const reqPedido = await fetch('http://26.204.212.174:8080/api/orders', {
+				const reqPedido = await fetch(`${ip}/api/orders`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

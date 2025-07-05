@@ -5,6 +5,8 @@
 	import type { Item } from '$lib/types/Item';
 	import type { itemComanda } from '$lib/types/itemComanda';
 
+	const ip = import.meta.env.VITE_IP;
+
 	export let item: Item;
 	export let produtos = [] as itemComanda[];
 	export let showToast: (message: string, type: 'info' | 'error' | 'success') => void;
@@ -56,7 +58,7 @@
 			onclick={async (e) => {
 				if (quantidade > 0) {
 					const reqAddProduto = await fetch(
-						`http://26.204.212.174:8080/api/orders/${$comanda.pedido}/products`,
+						`${ip}/api/orders/${$comanda.pedido}/products`,
 						{
 							method: 'POST',
 							headers: {
