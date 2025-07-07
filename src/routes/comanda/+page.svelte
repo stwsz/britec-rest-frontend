@@ -109,7 +109,7 @@
 							pedido: responseModal.orderId
 						});
 
-						localStorage.setItem(
+						sessionStorage.setItem(
 							'comanda',
 							JSON.stringify({
 								comanda: responseModal.id,

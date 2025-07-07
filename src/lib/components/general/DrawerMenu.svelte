@@ -123,6 +123,7 @@
 			class="me-2 bg-[var(--color-error)] text-white"
 			onclick={() => {
 				sessionStorage.removeItem('user');
+				sessionStorage.removeItem('comanda');
 				goto('/');
 			}}
 		>
@@ -158,7 +159,7 @@
 							pedido: String(keyComanda.orderId)
 						});
 
-						localStorage.setItem('comanda', JSON.stringify($comanda));
+						sessionStorage.setItem('comanda', JSON.stringify($comanda));
 
 						hiddenDrawer = true;
 						comandasAbertasModal = false;
@@ -235,7 +236,7 @@
 					pedido: closedComanda.orderId
 				});
 
-				localStorage.setItem('comanda', JSON.stringify($comanda));
+				sessionStorage.setItem('comanda', JSON.stringify($comanda));
 
 				modalComandasFechadas = false;
 				hiddenDrawer = true;

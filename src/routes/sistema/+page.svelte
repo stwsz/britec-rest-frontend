@@ -50,7 +50,7 @@
 			goto('/');
 		}
 
-		let storedComanda = localStorage.getItem('comanda');
+		let storedComanda = sessionStorage.getItem('comanda');
 
 		if (storedComanda) {
 			$comanda = JSON.parse(storedComanda);
