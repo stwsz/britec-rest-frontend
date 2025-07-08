@@ -79,7 +79,7 @@
 			</div>
 
 			<h2 class="mt-4 text-lg font-medium text-gray-700">
-				Atendente: <span class="font-semibold">{atendente}</span>
+				{$userInfo.admin === 1 ? 'Gerente' : 'Atendente'}: <span class="font-semibold">{atendente}</span>
 			</h2>
 		</div>
 

@@ -90,6 +90,8 @@
 						if (reqLogin.ok) {
 							const resLogin = await reqLogin.json();
 
+							console.log(resLogin);
+
 							sessionStorage.setItem('user', JSON.stringify(resLogin.user));
 							userInfo.set(resLogin.user);
 

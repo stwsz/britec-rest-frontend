@@ -286,33 +286,35 @@
 							</div>
 						</div>
 
-						<div class="flex items-center gap-4">
-							<Button
-								class="text-primary p-0 focus:ring-0 focus:outline-none"
-								onclick={() => {
-									modalEditProduct = true;
-									editProduto = produto;
-								}}
-							>
-								<PenOutline class="h-5 w-5" />
-							</Button>
+						{#if $userInfo.admin === 1}
+							<div class="flex items-center gap-4">
+								<Button
+									class="text-primary p-0 focus:ring-0 focus:outline-none"
+									onclick={() => {
+										modalEditProduct = true;
+										editProduto = produto;
+									}}
+								>
+									<PenOutline class="h-5 w-5" />
+								</Button>
 
-							<Button
-								class="p-0 text-red-500 focus:ring-0 focus:outline-none"
-								onclick={async () => {
-									await fetch(
-										`${ip}/api/orders/${$comanda.pedido}/products/${produto.id}`,
-										{
-											method: 'DELETE'
-										}
-									);
+								<Button
+									class="p-0 text-red-500 focus:ring-0 focus:outline-none"
+									onclick={async () => {
+										await fetch(
+											`${ip}/api/orders/${$comanda.pedido}/products/${produto.id}`,
+											{
+												method: 'DELETE'
+											}
+										);
 
-									produtos = produtos.filter((p) => p.id !== produto.id);
-								}}
-							>
-								<TrashBinOutline class="h-5 w-5" />
-							</Button>
-						</div>
+										produtos = produtos.filter((p) => p.id !== produto.id);
+									}}
+								>
+									<TrashBinOutline class="h-5 w-5" />
+								</Button>
+							</div>
+						{/if}
 					</li>
 				{/each}
 			</ul>
