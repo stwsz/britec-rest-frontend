@@ -73,18 +73,21 @@
 					});
 
 					if (reqAddProduto.ok) {
-						const resAddProduto = await reqAddProduto.json();
+						const reqProdutos = await fetch(`${ip}/api/orders/${$comanda.pedido}/products`);
+						const responseProdutos = await reqProdutos.json();
 
-						const produto = {
-							id: resAddProduto.order.id,
-							barCode: item.barCode ?? '',
-							nome: item.description,
-							preco: Number(Number(item.price).toFixed(2)),
-							unidade: item.unit,
-							quantidade: quantidade
-						};
+						if (!responseProdutos.message) {
+							produtos = responseProdutos.map((produto: any) => ({
+								employee: produto.employee,
+								id: produto.id,
+								nome: produto.description,
+								preco: parseFloat(produto.price),
+								quantidade: parseFloat(produto.quantity),
+								unidade: produto.unit,
+								barCode: produto.barCode ?? ''
+							}));
+						}
 
-						produtos = [...produtos, produto];
 						quantidade = 0;
 					}
 				} else {
