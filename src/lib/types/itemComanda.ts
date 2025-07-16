@@ -1,4 +1,5 @@
 export type itemComanda = {
+	employee?: string;
 	id?: number;
 	barCode: string;
 	nome: string;

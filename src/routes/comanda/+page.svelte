@@ -40,15 +40,12 @@
 	});
 
 	async function getComandas() {
-		const reqComanda = await fetch(
-			`${ip}/api/tables/check/${comandaInput.trim()}`,
-			{
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				}
+		const reqComanda = await fetch(`${ip}/api/tables/check/${comandaInput.trim()}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
 			}
-		);
+		});
 
 		responseModal = await reqComanda.json();
 	}
@@ -79,7 +76,8 @@
 			</div>
 
 			<h2 class="mt-4 text-lg font-medium text-gray-700">
-				{$userInfo.admin === 1 ? 'Gerente' : 'Atendente'}: <span class="font-semibold">{atendente}</span>
+				{$userInfo.admin === 1 ? 'Gerente' : 'Atendente'}:
+				<span class="font-semibold">{atendente}</span>
 			</h2>
 		</div>
 

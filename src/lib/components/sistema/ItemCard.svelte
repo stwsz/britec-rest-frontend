@@ -57,23 +57,20 @@
 			class="bg-primary rounded px-4 py-2 text-xs text-white"
 			onclick={async (e) => {
 				if (quantidade > 0) {
-					const reqAddProduto = await fetch(
-						`${ip}/api/orders/${$comanda.pedido}/products`,
-						{
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json'
-							},
-							body: JSON.stringify({
-								barCode: item.barCode ?? '',
-								description: item.description,
-								quantity: quantidade,
-								price: Number(item.price).toFixed(2),
-								unit: item.unit,
-								employee: $userInfo?.username
-							})
-						}
-					);
+					const reqAddProduto = await fetch(`${ip}/api/orders/${$comanda.pedido}/products`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							barCode: item.barCode ?? '',
+							description: item.description,
+							quantity: quantidade,
+							price: Number(item.price).toFixed(2),
+							unit: item.unit,
+							employee: $userInfo?.username
+						})
+					});
 
 					if (reqAddProduto.ok) {
 						const resAddProduto = await reqAddProduto.json();
@@ -82,7 +79,7 @@
 							id: resAddProduto.order.id,
 							barCode: item.barCode ?? '',
 							nome: item.description,
-							preco: Number((Number(item.price)).toFixed(2)),
+							preco: Number(Number(item.price).toFixed(2)),
 							unidade: item.unit,
 							quantidade: quantidade
 						};

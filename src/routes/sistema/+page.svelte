@@ -69,7 +69,7 @@
 			});
 
 			const responsePedidos = await reqPedido.json();
-			
+
 			const formattedDate = responsePedidos.order.date.split('-').reverse().join('/');
 
 			date = formattedDate;
@@ -84,17 +84,16 @@
 			const dateObj = new Date(responsePedidos[0].date);
 
 			hour = responsePedidos[0].hour;
-			
+
 			date = dateObj.toLocaleDateString('pt-BR');
 		}
 
-		const reqProdutos = await fetch(
-			`${ip}/api/orders/${$comanda.pedido}/products`
-		);
+		const reqProdutos = await fetch(`${ip}/api/orders/${$comanda.pedido}/products`);
 		const responseProdutos = await reqProdutos.json();
 
 		if (!responseProdutos.message) {
 			produtos = responseProdutos.map((produto: any) => ({
+				employee: produto.employee,
 				id: produto.id,
 				nome: produto.description,
 				preco: parseFloat(produto.price),
@@ -270,8 +269,13 @@
 					<li
 						class="text-primary flex items-center justify-between rounded-lg bg-gray-100 px-4 py-2 text-sm dark:text-gray-100"
 					>
-						<div class="flex flex-col">
-							<span class="font-medium">{produto.nome}</span>
+						<div class="flex flex-col gap-2">
+							<div class="flex items-center gap-2 text-xs">
+								<span class="font-medium">{produto.nome}</span>
+								<span>-</span>
+								<span>{produto.employee}</span>
+							</div>
+
 							<div class="flex items-center gap-2 text-xs">
 								<span class="font-semibold text-gray-700">
 									R$ {produto.preco.toFixed(2)}
@@ -301,12 +305,9 @@
 								<Button
 									class="p-0 text-red-500 focus:ring-0 focus:outline-none"
 									onclick={async () => {
-										await fetch(
-											`${ip}/api/orders/${$comanda.pedido}/products/${produto.id}`,
-											{
-												method: 'DELETE'
-											}
-										);
+										await fetch(`${ip}/api/orders/${$comanda.pedido}/products/${produto.id}`, {
+											method: 'DELETE'
+										});
 
 										produtos = produtos.filter((p) => p.id !== produto.id);
 									}}
@@ -326,7 +327,9 @@
 		<div class="flex flex-col leading-tight">
 			<p class="text-lg">Total:</p>
 			<p class="text-lg font-semibold">
-				R$ {produtos.reduce((total, produto) => total + produto.preco * produto.quantidade, 0).toFixed(2)}
+				R$ {produtos
+					.reduce((total, produto) => total + produto.preco * produto.quantidade, 0)
+					.toFixed(2)}
 			</p>
 		</div>
 		<button
@@ -364,8 +367,6 @@
 			<div class="flex justify-end gap-2 pt-4">
 				<Button
 					onclick={async (e: any) => {
-						console.log(produtos);
-
 						if (editProduto?.quantidade) {
 							if (editProduto.quantidade > 0) {
 								const editQuantity = await fetch(
